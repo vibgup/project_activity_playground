@@ -1,0 +1,33 @@
+.playground_container {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.playground_header {
+    padding: 50px;
+}
+
+.playground_info {
+    display: inline-block;
+}
+
+.playground_activity {
+    display: inline-block;
+    float: right;
+}
+
+.activity_action {
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+    padding: 10px;
+    color: black;
+    background-color: white;
+}
+
+.activity_action_active {
+    composes: activity_action;
+    color: white;
+    background-color: black;
+}
+

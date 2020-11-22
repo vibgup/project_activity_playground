@@ -161,14 +161,14 @@ function WhiteboardView(props) {
           color === penColor ? (
             <div
               key={color}
-              className={`${styles.color} ${styles["color-active"]} ${
-                styles[`color-${color}`]
+              className={`${styles.color} ${styles.color_active} ${
+                styles[`color_${color}`]
               }`}
             />
           ) : (
             <div
               key={color}
-              className={`${styles.color} ${styles[`color-${color}`]}`}
+              className={`${styles.color} ${styles[`color_${color}`]}`}
               onClick={() => {
                 onPenColorUpdate(color);
               }}

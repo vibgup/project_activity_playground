@@ -21,19 +21,19 @@
   margin: 4px;
 }
 
-.color-active {
+.color_active {
   border: 2px solid black;
 }
 
-.color-blue {
+.color_blue {
   background-color: blue;
 }
-.color-orangered {
+.color_orangered {
   background-color: orangered;
 }
-.color-yellow {
+.color_yellow {
   background-color: yellow;
 }
-.color-blueviolet {
+.color_blueviolet {
   background-color: blueviolet;
 }
