@@ -1,0 +1,39 @@
+
+.canvas {
+  border-style: solid;
+}
+
+.board_container {
+  display: flex;
+  max-width: 1200px;
+  margin: auto;
+}
+.board {
+  flex: 1;
+}
+.color_container {
+  flex: 0 0 100px;
+}
+
+.color {
+  height: 48px;
+  width: 48px;
+  margin: 4px;
+}
+
+.color-active {
+  border: 2px solid black;
+}
+
+.color-blue {
+  background-color: blue;
+}
+.color-orangered {
+  background-color: orangered;
+}
+.color-yellow {
+  background-color: yellow;
+}
+.color-blueviolet {
+  background-color: blueviolet;
+}

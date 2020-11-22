@@ -1,13 +1,8 @@
-import React from 'react';
-// import logo from 'logo.svg';
-// import { Counter } from 'features/counter/Counter';
-import './App.css';
-import { Router, useParams } from "@reach/router"
+import React from "react";
+import { Router } from "@reach/router";
+import "./App.css";
 
-function Playground() {
-  const params = useParams();
-return <div>Playground Room ID: {params.roomId}</div>;
-};
+import Playground from "containers/Playground/Playground";
 
 function Home() {
   return <div>HOME</div>;
