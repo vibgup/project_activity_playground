@@ -54,7 +54,7 @@ export const playgroundSlice = createSlice({
         payload: { type = null },
       } = action;
       if (type) {
-        emitSocket.updateActivity(type);
+        emitSocket.updateActivity(type, state.roomId);
       }
       state.activity = type;
     },
@@ -84,8 +84,8 @@ export const onSocket = () => (dispatch) => {
   // socket.on('hey', (...args) => {
   // });
 
-  socket.on("PLAYGROUND_ASSIGN_HOST", ({ isHost = false }) => {
-    dispatch(updateHost({ isHost }));
+  socket.on("PLAYGROUND_ASSIGN_HOST", ({ host = false }) => {
+    dispatch(updateHost({ isHost: host }));
   });
 
   socket.on("PLAYGROUND_UPDATE_ACTIVITY", ({ type = null }) => {
@@ -109,7 +109,7 @@ const emitSocket = {
   joinRoom(roomId) {
     socket.emit("PLAYGROUND_JOIN_ROOM", { roomId });
   },
-  updateActivity(type) {
-    socket.emit("PLAYGROUND_UPDATE_ACTIVITY", { type });
+  updateActivity(type, roomId) {
+    // socket.emit("PLAYGROUND_UPDATE_ACTIVITY", { type, roomId });
   },
 };
