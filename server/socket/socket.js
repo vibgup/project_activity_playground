@@ -4,7 +4,7 @@
 
 const socket = (io) => {
   io.on("connection", (socket) => {
-    console.log("socket connected");
+    // console.log("socket connected");
 
     // playground(socket, io);
 
@@ -27,7 +27,7 @@ const socket = (io) => {
     });
 
     socket.on("PLAYGROUND_ACTIVITY_EVENT", ({ roomId, ...args }) => {
-      console.log("PLAYGROUND_ACTIVITY_EVENT", roomId, { ...args });
+      // console.log("PLAYGROUND_ACTIVITY_EVENT", roomId, { ...args });
       socket.to(roomId).emit("PLAYGROUND_ACTIVITY_EVENT", { ...args });
     });
 
@@ -35,9 +35,7 @@ const socket = (io) => {
       const rooms = socket.rooms;
 
       for (var it = rooms.values(), val = null; (val = it.next().value); ) {
-        console.log(val);
         const room_socket_length = io.sockets.adapter.rooms.get(val).size;
-        console.log({ val, room_socket_length });
         if (room_socket_length > 1) {
           io.to(val).emit("PLAYGROUND_UPDATE_CONNECTIONS", {
             connections: room_socket_length - 1,

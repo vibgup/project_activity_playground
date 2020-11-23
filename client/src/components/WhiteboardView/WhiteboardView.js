@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import socket from "services/socket";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import styles from "./WhiteboardView.module.css";
 
@@ -18,18 +18,12 @@ const colorList = ["blue", "orangered", "yellow", "blueviolet"];
  */
 
 function WhiteboardView() {
-  // const {
-  //   penColor = colorList[0],
-  //   onPenColorUpdate,
-  //   onDraw,
-  //   addSnip,
-  //   reDraw,
-  // } = props;
 
   const [penColor, setPenColor] = useState(colorList[0]);
   const [drawing, setDrawing] = useState(false);
   const [current, setCurrent] = useState({ x: 0, y: 0 });
   const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
+  const [canvasDimension, setCanvasDimension] = useState({ w: 0, h: 0 });
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [ctx, setCtx] = useState({});
@@ -41,8 +35,10 @@ function WhiteboardView() {
 
   useEffect(() => {
     let canv = canvasRef.current;
-    canv.width = containerRef.current.offsetWidth;
-    canv.height = containerRef.current.offsetHeight;
+    const canvas_w = (canv.width = containerRef.current.offsetWidth);
+    const canvas_h = (canv.height = containerRef.current.offsetHeight);
+
+    setCanvasDimension({ w: canvas_w, h: canvas_h });
 
     let canvCtx = canv.getContext("2d");
     canvCtx.lineJoin = "round";
@@ -72,6 +68,8 @@ function WhiteboardView() {
 
   function drawLine(x0, y0, x1, y1, color, emit) {
 
+    if(!ctx) return;
+
     ctx.strokeStyle = color;
     ctx.beginPath();
     ctx.moveTo(x0, y0);
@@ -80,27 +78,25 @@ function WhiteboardView() {
     ctx.stroke();
     ctx.closePath();
 
-    // if (!emit) {
-    //   return;
-    // }
-    // const canvas = canvasRef.current;
-    // const w = canvas.width;
-    // const h = canvas.height;
+    if (!emit) {
+      return;
+    }
 
-    // if (socket) {
-    //   socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
-    //     roomId: playgroundState.roomId,
-    //     activityType: activityTypes.whiteboard,
-    //     eventType: "DRAW",
-    //     payload: {
-    //       x0: x0 / w,
-    //       y0: y0 / h,
-    //       x1: x1 / w,
-    //       y1: y1 / h,
-    //       color: color,
-    //     },
-    //   });
-    // }
+    const { w, h } = canvasDimension;
+    if (socket) {
+      socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+        roomId: playgroundState.roomId,
+        activityType: activityTypes.whiteboard,
+        eventType: "DRAW",
+        payload: {
+          x0: x0 / w,
+          y0: y0 / h,
+          x1: x1 / w,
+          y1: y1 / h,
+          color: color,
+        },
+      });
+    }
   }
 
   function getCoordinates(e) {
@@ -167,10 +163,7 @@ function WhiteboardView() {
   }
 
   function onDrawingEvent(data) {
-    console.log('onDrawingEvent', ctx);
-    // const canvas = canvasRef.current;
-    // const w = canvas.width;
-    // const h = canvas.height;
+    const { w, h } = canvasDimension;
     // drawLine(
     //   data.x0 * w,
     //   data.y0 * h,

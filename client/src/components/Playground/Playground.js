@@ -29,11 +29,8 @@ function Playground({ roomId }) {
   }, []);
 
   useEffect(() => {
-    console.log({roomId});
     dispatch(initialize({roomId}));
   }, [roomId]);
-
-  console.log(state);
 
   if (!state.connectionStatus) {
     return <div className={styles.playground_container}>
