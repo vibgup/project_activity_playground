@@ -2,7 +2,7 @@ import React from "react";
 import { Router } from "@reach/router";
 import "./App.css";
 
-import Playground from "containers/Playground/Playground";
+import Playground from "components/Playground/Playground";
 
 function Home() {
   return <div>HOME</div>;

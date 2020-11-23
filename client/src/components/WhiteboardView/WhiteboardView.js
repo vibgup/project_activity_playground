@@ -1,5 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
+import socket from "services/socket";
+import { useSelector, useDispatch } from "react-redux";
+
 import styles from "./WhiteboardView.module.css";
+
+import {
+  activityTypes,
+  selectPlaygroundActivity,
+} from "components/Playground/playgroundSlice";
 
 const colorList = ["blue", "orangered", "yellow", "blueviolet"];
 
@@ -9,21 +17,27 @@ const colorList = ["blue", "orangered", "yellow", "blueviolet"];
  * Offset fixes: https://github.com/RanaEmad/whiteboard
  */
 
-function WhiteboardView(props) {
-  const {
-    penColor = colorList[0],
-    onPenColorUpdate,
-    onDraw,
-    addSnip,
-    reDraw,
-  } = props;
+function WhiteboardView() {
+  // const {
+  //   penColor = colorList[0],
+  //   onPenColorUpdate,
+  //   onDraw,
+  //   addSnip,
+  //   reDraw,
+  // } = props;
 
+  const [penColor, setPenColor] = useState(colorList[0]);
   const [drawing, setDrawing] = useState(false);
   const [current, setCurrent] = useState({ x: 0, y: 0 });
   const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [ctx, setCtx] = useState({});
+  const playgroundState = useSelector(selectPlaygroundActivity);
+
+  useEffect(() => {
+    socket.on("PLAYGROUND_ACTIVITY_EVENT", handleActivityEvent);
+  });
 
   useEffect(() => {
     let canv = canvasRef.current;
@@ -40,6 +54,22 @@ function WhiteboardView(props) {
     setCanvasOffset({ x: parseInt(offset.left), y: parseInt(offset.top) });
   }, [ctx]);
 
+  function handleActivityEvent(e) {
+    const { activityType, eventType, payload } = e;
+
+    if (!activityType || !eventType || !payload) {
+      return;
+    }
+
+    if (activityType !== activityTypes.whiteboard) {
+      return;
+    }
+
+    if (eventType === "DRAW") {
+      onDrawingEvent(payload);
+    }
+  }
+
   function drawLine(x0, y0, x1, y1, color, emit) {
 
     ctx.strokeStyle = color;
@@ -50,20 +80,27 @@ function WhiteboardView(props) {
     ctx.stroke();
     ctx.closePath();
 
-    if (!emit) { return; }
-    const canvas = canvasRef.current;
-    const w = canvas.width;
-    const h = canvas.height;
+    // if (!emit) {
+    //   return;
+    // }
+    // const canvas = canvasRef.current;
+    // const w = canvas.width;
+    // const h = canvas.height;
 
-    if (onDraw) {
-      onDraw('drawing', {
-        x0: x0 / w,
-        y0: y0 / h,
-        x1: x1 / w,
-        y1: y1 / h,
-        color: color
-      });  
-    }
+    // if (socket) {
+    //   socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+    //     roomId: playgroundState.roomId,
+    //     activityType: activityTypes.whiteboard,
+    //     eventType: "DRAW",
+    //     payload: {
+    //       x0: x0 / w,
+    //       y0: y0 / h,
+    //       x1: x1 / w,
+    //       y1: y1 / h,
+    //       color: color,
+    //     },
+    //   });
+    // }
   }
 
   function getCoordinates(e) {
@@ -71,10 +108,6 @@ function WhiteboardView(props) {
     const client_y = e?.clientY ?? (e?.touches ? 0.0?.clientY : 0);
     const updated_x = client_x - canvasOffset.x;
     const updated_y = client_y - canvasOffset.y;
-    // console.log({
-    //   updated_x,
-    //   updated_y,
-    // });
     return {
       x: updated_x,
       y: updated_y,
@@ -133,11 +166,19 @@ function WhiteboardView(props) {
     };
   }
 
-  function onDrawingEvent(data){
-    const canvas = canvasRef.current;
-    const w = canvas.width;
-    const h = canvas.height;
-    drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color, false);
+  function onDrawingEvent(data) {
+    console.log('onDrawingEvent', ctx);
+    // const canvas = canvasRef.current;
+    // const w = canvas.width;
+    // const h = canvas.height;
+    // drawLine(
+    //   data.x0 * w,
+    //   data.y0 * h,
+    //   data.x1 * w,
+    //   data.y1 * h,
+    //   data.color,
+    //   false
+    // );
   }
 
   return (
@@ -170,7 +211,7 @@ function WhiteboardView(props) {
               key={color}
               className={`${styles.color} ${styles[`color_${color}`]}`}
               onClick={() => {
-                onPenColorUpdate(color);
+                setPenColor(color);
               }}
             />
           )

@@ -35,6 +35,12 @@ function Playground({ roomId }) {
 
   console.log(state);
 
+  if (!state.connectionStatus) {
+    return <div className={styles.playground_container}>
+      CONNECTING ...
+    </div>;
+  }
+
   return (
     <div className={styles.playground_container}>
       <div className={styles.playground_header}>
@@ -78,8 +84,8 @@ function Playground({ roomId }) {
         )}
       </div>
       <div className={styles.activity_container}>
-        <VideoView />
-        <WhiteboardView />
+        {state.activity === activityTypes.whiteboard && <WhiteboardView /> }
+        {state.activity === activityTypes.video && <VideoView /> }
       </div>
     </div>
   );

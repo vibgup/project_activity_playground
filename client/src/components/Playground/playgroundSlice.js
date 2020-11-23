@@ -20,13 +20,13 @@ export const playgroundSlice = createSlice({
   initialState,
   reducers: {
     reset(state, action) {
-      return Object.assign({}, initialState);
+      state = Object.assign({}, initialState);
     },
     initialize(state, action) {
       const {
         payload: { roomId = null },
       } = action;
-      if (roomId) {
+      if (roomId && socket.connected) {
         emitSocket.joinRoom(roomId);
       }
       state.roomId = roomId;
@@ -36,6 +36,18 @@ export const playgroundSlice = createSlice({
         payload: { status = false },
       } = action;
       state.connectionStatus = status;
+    },
+    onConnect(state, action) {
+      state.connectionStatus = true;
+      if (state.roomId) {
+        emitSocket.joinRoom(state.roomId);
+      }
+    },
+    onDisconnect(state, action) {
+      state.connectionStatus = false;
+      state.isHost = false;
+      state.activeConnections = null;
+      state.activity = null;
     },
     updateHost(state, action) {
       const {
@@ -51,9 +63,9 @@ export const playgroundSlice = createSlice({
     },
     updateActivity(state, action) {
       const {
-        payload: { type = null },
+        payload: { type = null, noEmit = false },
       } = action;
-      if (type) {
+      if (type && !noEmit) {
         emitSocket.updateActivity(type, state.roomId);
       }
       state.activity = type;
@@ -66,6 +78,11 @@ export const selectPlayground = state => {
   return { connectionStatus, isHost, activeConnections, activity, roomId };
 };
 
+export const selectPlaygroundActivity = state => {
+  const {playground: { isHost, activity, roomId }} = state;
+  return { isHost, activity, roomId };
+};
+
 const { actions, reducer } = playgroundSlice;
 export const {
   reset,
@@ -74,6 +91,8 @@ export const {
   updateHost,
   updateConnections,
   updateActivity,
+  onConnect,
+  onDisconnect,
 } = actions;
 
 export default reducer;
@@ -89,7 +108,7 @@ export const onSocket = () => (dispatch) => {
   });
 
   socket.on("PLAYGROUND_UPDATE_ACTIVITY", ({ type = null }) => {
-    dispatch(updateActivity({ type }));
+    dispatch(updateActivity({ type, noEmit: true }));
   });
 
   socket.on("PLAYGROUND_UPDATE_CONNECTIONS", ({ connections = null }) => {
@@ -97,11 +116,11 @@ export const onSocket = () => (dispatch) => {
   });
 
   socket.on("connect", () => {
-    dispatch(updateConnectionStatus({ status: true }));
+    dispatch(onConnect());
   });
 
   socket.on("disconnect", () => {
-    dispatch(updateConnectionStatus({ status: false }));
+    dispatch(onDisconnect());
   });
 };
 
@@ -110,6 +129,6 @@ const emitSocket = {
     socket.emit("PLAYGROUND_JOIN_ROOM", { roomId });
   },
   updateActivity(type, roomId) {
-    // socket.emit("PLAYGROUND_UPDATE_ACTIVITY", { type, roomId });
+    socket.emit("PLAYGROUND_UPDATE_ACTIVITY", { type, roomId });
   },
 };

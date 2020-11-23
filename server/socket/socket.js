@@ -26,6 +26,11 @@ const socket = (io) => {
       socket.to(roomId).emit("PLAYGROUND_UPDATE_ACTIVITY", { type });
     });
 
+    socket.on("PLAYGROUND_ACTIVITY_EVENT", ({ roomId, ...args }) => {
+      console.log("PLAYGROUND_ACTIVITY_EVENT", roomId, { ...args });
+      socket.to(roomId).emit("PLAYGROUND_ACTIVITY_EVENT", { ...args });
+    });
+
     socket.on("disconnecting", (reason) => {
       const rooms = socket.rooms;
 
@@ -39,7 +44,6 @@ const socket = (io) => {
           });
         }
       }
-      P;
     });
   });
 };

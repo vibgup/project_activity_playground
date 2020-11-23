@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import playgroundReducer from 'containers/Playground/playgroundSlice';
+import playgroundReducer from 'components/Playground/playgroundSlice';
 
 export default configureStore({
   reducer: {
