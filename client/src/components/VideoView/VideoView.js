@@ -66,6 +66,7 @@ function VideoView() {
         const { url } = payload;
         if (url) {
           setVideoUrl(url);
+          setPlayerStatePlaying(true);
         }
         break;
       }
@@ -153,6 +154,7 @@ function VideoView() {
   //   const handleSeek = (e) => {};
   const loadUrl = (url) => {
     setVideoUrl(url);
+    setPlayerStatePlaying(true);
 
     if (playgroundState.isHost && socket) {
       socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
@@ -188,7 +190,7 @@ function VideoView() {
           {playgroundState.isHost && <div className={styles.back_container}>
             <button
               onClick={() => {
-                setVideoUrl(null);
+                handleEnded();
               }}
             >
               Back to Selection
