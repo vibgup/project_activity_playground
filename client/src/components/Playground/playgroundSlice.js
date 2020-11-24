@@ -3,9 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import socket from "services/socket";
 
 export const activityTypes = {
-  whiteboard: 'WHITEBOARD',
-  video: 'VIDEO',
-}
+  whiteboard: "WHITEBOARD",
+  video: "VIDEO",
+};
 
 const initialState = {
   connectionStatus: false,
@@ -70,16 +70,36 @@ export const playgroundSlice = createSlice({
       }
       state.activity = type;
     },
+    // syncApp(state, action) {
+    //   if (state.isHost) {
+    //     emitSocket.syncUpdateApp(
+    //       {
+    //         type: state.activity,
+    //       },
+    //       state.roomId
+    //     );
+    //   }
+    // },
   },
 });
 
-export const selectPlayground = state => {
-  const {playground: { connectionStatus, isHost, activeConnections, activity, roomId }} = state;
+export const selectPlayground = (state) => {
+  const {
+    playground: {
+      connectionStatus,
+      isHost,
+      activeConnections,
+      activity,
+      roomId,
+    },
+  } = state;
   return { connectionStatus, isHost, activeConnections, activity, roomId };
 };
 
-export const selectPlaygroundActivity = state => {
-  const {playground: { isHost, activity, roomId }} = state;
+export const selectPlaygroundActivity = (state) => {
+  const {
+    playground: { isHost, activity, roomId },
+  } = state;
   return { isHost, activity, roomId };
 };
 
@@ -93,15 +113,12 @@ export const {
   updateActivity,
   onConnect,
   onDisconnect,
+  // syncApp,
 } = actions;
 
 export default reducer;
 
 export const onSocket = () => (dispatch) => {
-  // socket.emit('hello', { a: 'b', c: [] });
-
-  // socket.on('hey', (...args) => {
-  // });
 
   socket.on("PLAYGROUND_ASSIGN_HOST", ({ host = false }) => {
     dispatch(updateHost({ isHost: host }));
@@ -129,6 +146,6 @@ const emitSocket = {
     socket.emit("PLAYGROUND_JOIN_ROOM", { roomId });
   },
   updateActivity(type, roomId) {
-    socket.emit("PLAYGROUND_UPDATE_ACTIVITY", { type, roomId });
+    socket.emit("PLAYGROUND_EMIT_ROOM", { emitType: 'PLAYGROUND_UPDATE_ACTIVITY', type, roomId });
   },
 };

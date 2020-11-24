@@ -6,7 +6,9 @@
 // };
 
 /**
- * Setup server or cached
+ * host ID storage
+ * storage maybe moved to a cache layer if need be
+ * Can be reviewed for a peer or socket based method
  */
 const hostMap = {};
 

@@ -48,6 +48,9 @@ function VideoView() {
 
   useEffect(() => {
     socket.on("PLAYGROUND_ACTIVITY_EVENT", handleActivityEvent);
+    // if (playgroundState.isHost) {
+    //   socket.on("PLAYGROUND_SYNC_ACTIVITY", handleSyncUpdate);
+    // }
   });
 
   function handleActivityEvent(e) {
@@ -93,6 +96,19 @@ function VideoView() {
     }
   }
 
+  // function handleSyncUpdate(e) {
+  //   socket.emit("PLAYGROUND_UPDATE_ACTIVITY", {
+  //     roomId: playgroundState.roomId,
+  //     activityType: activityTypes.video,
+  //     eventType: "UPDATE",
+  //     payload: {
+  //       url: videoUrl,
+  //       playing: playerStatePlaying,
+  //       progress: playerStateProgress,
+  //     },
+  //   });
+  // }
+
   const handleSeekMouseDown = (e) => {
     setPlayerStateSeek(true);
   };
@@ -100,7 +116,8 @@ function VideoView() {
     const seekToValue = parseFloat(e.target.value);
     playerRef.current.seekTo(seekToValue);
     if (playgroundState.isHost && socket) {
-      socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+      socket.emit("PLAYGROUND_EMIT_ROOM", {
+        emitType: 'PLAYGROUND_ACTIVITY_EVENT',
         roomId: playgroundState.roomId,
         activityType: activityTypes.video,
         eventType: "SEEK",
@@ -121,7 +138,8 @@ function VideoView() {
   const handlePlay = (e) => {
     setPlayerStatePlaying(true);
     if (playgroundState.isHost && socket) {
-      socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+      socket.emit("PLAYGROUND_EMIT_ROOM", {
+        emitType: 'PLAYGROUND_ACTIVITY_EVENT',
         roomId: playgroundState.roomId,
         activityType: activityTypes.video,
         eventType: "PLAY",
@@ -132,7 +150,8 @@ function VideoView() {
     setPlayerStatePlaying(false);
 
     if (playgroundState.isHost && socket) {
-      socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+      socket.emit("PLAYGROUND_EMIT_ROOM", {
+        emitType: 'PLAYGROUND_ACTIVITY_EVENT',
         roomId: playgroundState.roomId,
         activityType: activityTypes.video,
         eventType: "PAUSE",
@@ -144,7 +163,8 @@ function VideoView() {
     setVideoUrl(null);
 
     if (playgroundState.isHost && socket) {
-      socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+      socket.emit("PLAYGROUND_EMIT_ROOM", {
+        emitType: 'PLAYGROUND_ACTIVITY_EVENT',
         roomId: playgroundState.roomId,
         activityType: activityTypes.video,
         eventType: "END",
@@ -157,7 +177,8 @@ function VideoView() {
     setPlayerStatePlaying(true);
 
     if (playgroundState.isHost && socket) {
-      socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+      socket.emit("PLAYGROUND_EMIT_ROOM", {
+        emitType: 'PLAYGROUND_ACTIVITY_EVENT',
         roomId: playgroundState.roomId,
         activityType: activityTypes.video,
         eventType: "LOAD",

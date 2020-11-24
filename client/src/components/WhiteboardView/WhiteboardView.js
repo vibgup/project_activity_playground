@@ -84,7 +84,8 @@ function WhiteboardView() {
 
     const { w, h } = canvasDimension;
     if (socket) {
-      socket.emit("PLAYGROUND_ACTIVITY_EVENT", {
+      socket.emit("PLAYGROUND_EMIT_ROOM", {
+        emitType: 'PLAYGROUND_ACTIVITY_EVENT',
         roomId: playgroundState.roomId,
         activityType: activityTypes.whiteboard,
         eventType: "DRAW",
