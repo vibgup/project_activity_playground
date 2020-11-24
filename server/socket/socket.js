@@ -1,6 +1,14 @@
+/**
+ * Namespace the Room Id used
+ */
 // const playgroundRoomId = (roomId) => {
 //   return `PLAYGROUND_ACTIVITY_${roomId}`;
 // };
+
+/**
+ * Setup server or cached
+ */
+const hostMap = {};
 
 const socket = (io) => {
   io.on("connection", (socket) => {
@@ -15,6 +23,9 @@ const socket = (io) => {
 
       if (room_socket_length === 1) {
         socket.emit("PLAYGROUND_ASSIGN_HOST", { host: true });
+        hostMap[socket.id] = roomId;
+      } else {
+        socket.to(roomId).emit("PLAYGROUND_SYNC");
       }
 
       io.to(roomId).emit("PLAYGROUND_UPDATE_CONNECTIONS", {
@@ -34,12 +45,32 @@ const socket = (io) => {
     socket.on("disconnecting", (reason) => {
       const rooms = socket.rooms;
 
-      for (var it = rooms.values(), val = null; (val = it.next().value); ) {
-        const room_socket_length = io.sockets.adapter.rooms.get(val).size;
-        if (room_socket_length > 1) {
-          io.to(val).emit("PLAYGROUND_UPDATE_CONNECTIONS", {
-            connections: room_socket_length - 1,
+      for (let roomId of rooms) {
+        const roomSetSize = io.sockets.adapter.rooms.get(roomId).size;
+        if (roomSetSize > 1) {
+          io.to(roomId).emit("PLAYGROUND_UPDATE_CONNECTIONS", {
+            connections: roomSetSize - 1,
           });
+        }
+      }
+
+    });
+
+    socket.on("disconnect", (reason) => {
+      if (hostMap[socket.id]) {
+        const roomId = hostMap[socket.id];
+        delete hostMap[socket.id];
+
+        const roomSocketSet = io.sockets.adapter.rooms.get(roomId);
+
+        if (roomSocketSet) {
+          const roomSocketLength = roomSocketSet.size;
+
+          if (roomSocketLength > 0) {
+            const socketIdNext = roomSocketSet.values().next().value;
+            io.to(socketIdNext).emit("PLAYGROUND_ASSIGN_HOST", { host: true });
+            hostMap[socketIdNext] = roomId;
+          }
         }
       }
     });
