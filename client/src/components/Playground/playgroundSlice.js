@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createSelector } from "@reduxjs/toolkit";
 
 import socket from "services/socket";
 
@@ -7,6 +7,12 @@ export const activityTypes = {
   video: "VIDEO",
 };
 
+/**
+ * Slice -> Reducer, Actions
+ */
+
+const reducerName = 'playground';
+ 
 const initialState = {
   connectionStatus: false,
   roomId: null,
@@ -15,8 +21,8 @@ const initialState = {
   activity: null, // WHITEBOARD VIDEO
 };
 
-export const playgroundSlice = createSlice({
-  name: "playground",
+ export const playgroundSlice = createSlice({
+  name: reducerName,
   initialState,
   reducers: {
     reset(state, action) {
@@ -83,6 +89,12 @@ export const playgroundSlice = createSlice({
   },
 });
 
+/**
+ *  Selectors
+ */
+
+const selectState = (state) => state[reducerName];
+
 export const selectPlayground = (state) => {
   const {
     playground: {
@@ -103,6 +115,8 @@ export const selectPlaygroundActivity = (state) => {
   return { isHost, activity, roomId };
 };
 
+export const selectorPlaygroundActivity = createSelector(selectState, ({ isHost, activity, roomId }) => ({ isHost, activity, roomId }));
+
 const { actions, reducer } = playgroundSlice;
 export const {
   reset,
@@ -117,6 +131,10 @@ export const {
 } = actions;
 
 export default reducer;
+
+/**
+ * Handle Socket
+ */
 
 export const onSocket = () => (dispatch) => {
 
