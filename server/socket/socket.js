@@ -49,7 +49,7 @@ const socket = (io) => {
     // });
 
     socket.on("PLAYGROUND_EMIT_ROOM", ({ emitType, roomId, ...args }) => {
-      console.log("PLAYGROUND_EMIT_ROOM", emitType, roomId, { ...args });
+      // console.log("PLAYGROUND_EMIT_ROOM", emitType, roomId, { ...args });
       socket.to(roomId).emit(emitType, { ...args });
     });
 
