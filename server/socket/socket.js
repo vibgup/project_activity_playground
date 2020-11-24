@@ -14,10 +14,6 @@ const hostMap = {};
 
 const socket = (io) => {
   io.on("connection", (socket) => {
-    // console.log("socket connected");
-
-    // playground(socket, io);
-
     socket.on("PLAYGROUND_JOIN_ROOM", ({ roomId }) => {
       socket.join(roomId);
 
@@ -27,7 +23,7 @@ const socket = (io) => {
         socket.emit("PLAYGROUND_ASSIGN_HOST", { host: true });
         hostMap[socket.id] = roomId;
       } else {
-        socket.to(roomId).emit("PLAYGROUND_SYNC");
+        socket.to(roomId).emit("PLAYGROUND_SYNC_APP");
       }
 
       io.to(roomId).emit("PLAYGROUND_UPDATE_CONNECTIONS", {
@@ -35,13 +31,18 @@ const socket = (io) => {
       });
     });
 
-    socket.on("PLAYGROUND_UPDATE_ACTIVITY", ({ type, roomId }) => {
-      socket.to(roomId).emit("PLAYGROUND_UPDATE_ACTIVITY", { type });
-    });
+    // socket.on("PLAYGROUND_UPDATE_ACTIVITY", ({ type, roomId }) => {
+    //   socket.to(roomId).emit("PLAYGROUND_UPDATE_ACTIVITY", { type });
+    // });
 
-    socket.on("PLAYGROUND_ACTIVITY_EVENT", ({ roomId, ...args }) => {
-      // console.log("PLAYGROUND_ACTIVITY_EVENT", roomId, { ...args });
-      socket.to(roomId).emit("PLAYGROUND_ACTIVITY_EVENT", { ...args });
+    // socket.on("PLAYGROUND_ACTIVITY_EVENT", ({ roomId, ...args }) => {
+    //   // console.log("PLAYGROUND_ACTIVITY_EVENT", roomId, { ...args });
+    //   socket.to(roomId).emit("PLAYGROUND_ACTIVITY_EVENT", { ...args });
+    // });
+
+    socket.on("PLAYGROUND_EMIT_ROOM", ({ emitType, roomId, ...args }) => {
+      console.log("PLAYGROUND_EMIT_ROOM", emitType, roomId, { ...args });
+      socket.to(roomId).emit(emitType, { ...args });
     });
 
     socket.on("disconnecting", (reason) => {
@@ -55,7 +56,6 @@ const socket = (io) => {
           });
         }
       }
-
     });
 
     socket.on("disconnect", (reason) => {
