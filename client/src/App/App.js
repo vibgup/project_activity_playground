@@ -7,7 +7,7 @@ import Playground from "components/Playground/Playground";
 function Home() {
   return (<div>
     <p>Activity Playground</p>
-    <p>Please join a room by navigate to <strong>/:room</strong></p>
+    <p>Please join a room by navigating to <strong>/:room</strong></p>
   </div>);
 }
 
