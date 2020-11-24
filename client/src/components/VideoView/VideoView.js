@@ -49,7 +49,7 @@ function VideoView() {
   useEffect(() => {
     socket.on("PLAYGROUND_ACTIVITY_EVENT", handleActivityEvent);
     // if (playgroundState.isHost) {
-    //   socket.on("PLAYGROUND_SYNC_ACTIVITY", handleSyncUpdate);
+    //   socket.on("PLAYGROUND_SYNC_APP", handleSyncUpdate);
     // }
   });
 
@@ -97,7 +97,10 @@ function VideoView() {
   }
 
   // function handleSyncUpdate(e) {
-  //   socket.emit("PLAYGROUND_UPDATE_ACTIVITY", {
+  //   const { socketId = null } = e;
+
+  //   socket.emit("PLAYGROUND_SYNC_APP_UPDATE", {
+  //     socketId: socketId,
   //     roomId: playgroundState.roomId,
   //     activityType: activityTypes.video,
   //     eventType: "UPDATE",
@@ -193,29 +196,33 @@ function VideoView() {
     <div className={styles.view_container}>
       {videoUrl === null && playgroundState.isHost && (
         <div className={styles.video_selector_container}>
-          {videoIdList.map((videoId) => (
-            <div
-              key={videoId.id}
-              onClick={() => {
-                loadUrl(videoId.url);
-              }}
-            >
-              {videoId.title}
-            </div>
-          ))}
+          <div className={styles.video_selector_title} >SELECT VIDEO</div>
+          <div className={styles.video_selector} >
+            {videoIdList.map((videoId) => (
+              <div
+                className={styles.video_selector_item}
+                key={videoId.id}
+                onClick={() => {
+                  loadUrl(videoId.url);
+                }}
+              >
+                {videoId.title}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {videoUrl !== null && (
         <div className={styles.player_container}>
           {playgroundState.isHost && <div className={styles.back_container}>
-            <button
+            <div
               onClick={() => {
                 handleEnded();
               }}
             >
-              Back to Selection
-            </button>
+              &lt; Back to Selection
+            </div>
           </div>}
           <div className={styles.video_container}>
             <ReactPlayer

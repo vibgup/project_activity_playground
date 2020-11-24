@@ -18,7 +18,27 @@
 }
 
 .back_container {
-
+    padding: 20px;
 }
 
 
+.video_selector_title {
+    text-align: center;
+}
+.video_selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+}
+.video_selector_item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 150px;
+    height: 150px;    
+    color: black;
+    background-color: lightgray;
+    margin: 5px;
+}

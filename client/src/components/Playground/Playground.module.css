@@ -12,7 +12,7 @@
 }
 
 .playground_activity {
-    display: inline-block;
+    /* display: inline-block; */
     float: right;
 }
 
@@ -23,6 +23,7 @@
     padding: 10px;
     color: black;
     background-color: lightgray;
+    margin: 5px;
 }
 
 .activity_action_active {

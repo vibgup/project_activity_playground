@@ -7,7 +7,7 @@
 
 /**
  * host ID storage
- * storage maybe moved to a cache layer if need be
+ * storage maybe moved to a cache layer or store if need be
  * Can be reviewed for a peer or socket based method
  */
 const hostMap = {};
@@ -23,12 +23,20 @@ const socket = (io) => {
         socket.emit("PLAYGROUND_ASSIGN_HOST", { host: true });
         hostMap[socket.id] = roomId;
       } else {
-        socket.to(roomId).emit("PLAYGROUND_SYNC_APP");
+        socket.to(roomId).emit("PLAYGROUND_SYNC_APP", { socketId: socket.id });
       }
 
       io.to(roomId).emit("PLAYGROUND_UPDATE_CONNECTIONS", {
         connections: room_socket_length,
       });
+    });
+
+    socket.on("PLAYGROUND_SYNC_APP_UPDATE", ({ socketId, roomId, ...args }) => {
+      if(socketId){
+        io.to(socketId).emit('PLAYGROUND_SYNC_APP_UPDATE', { ...args });
+      } else if (roomId) {
+        socket.to(roomId).emit('PLAYGROUND_SYNC_APP_UPDATE', { ...args });
+      }
     });
 
     // socket.on("PLAYGROUND_UPDATE_ACTIVITY", ({ type, roomId }) => {
